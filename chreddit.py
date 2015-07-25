@@ -1,16 +1,11 @@
-import sql 
-import time
-import HTMLParser
-import praw
-import feedparser
-import random
-import feeds
-import os
+import sql, time, os, HTMLParser, praw, feedparser, random, feeds, logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+logging.basicConfig()
 scheduler = BlockingScheduler()
 
-@scheduler.scheduled_job('interval', minutes=1)
+
+@scheduler.scheduled_job('interval', minutes=10)
 def post_news_to_reddit():
     reddit = praw.Reddit(user_agent='chreddit 1.0')
     username = os.environ['REDDIT_USERNAME']
