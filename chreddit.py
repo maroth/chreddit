@@ -28,9 +28,9 @@ def make_submission_title(title, description):
     max_length = 300
     suffix = '...'
     htmlParser = HTMLParser.HTMLParser()
-    submission_title = htmlParser.unescape(entry.title)
-    if entry.description:
-        description = htmlParser.unescape(entry.description)
+    submission_title = htmlParser.unescape(title)
+    if description:
+        description = htmlParser.unescape(description)
         submission_title += ' ' + u'\u2014' + ' ' + description
     if len(submission_title) <= 300:
         return submission_title
