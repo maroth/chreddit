@@ -16,6 +16,7 @@ def select_article():
     for entry in feed.entries:
         if not sql.submitted(entry.link):
             post(entry)
+            break
 
 def post(entry):
     sql.submit(entry.title)
