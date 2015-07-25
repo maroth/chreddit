@@ -14,11 +14,12 @@ def select_article():
     feed_address = random.choice(feeds.feeds)
     feed = feedparser.parse(feed_address)
     for entry in feed.entries:
-        if not sql.submitted(entry.link):
+        if not sql.submitted(entry.link) and not sql.submitted(entry.title):
             post(entry)
             break
 
 def post(entry):
+    sql.submit(entry.link)
     sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
     subreddit = os.environ['SUBREDDIT']
