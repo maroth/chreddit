@@ -18,7 +18,7 @@ def post(entry):
     sql.submit(entry.link)
     sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
-    print u'submitting ' + title.encode('utf-8')
+    print 'submitting '.encode('utf-8') + title.encode('utf-8')
     reddit.submit(config.subreddit, title, url=entry.link)
     
 def make_submission_title(title, description):
