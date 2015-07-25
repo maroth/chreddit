@@ -32,7 +32,7 @@ def submit(title):
     to_delete_ids = [i[0] for i in to_delete]
 
     session = Session()
-    session.query(sql.Submission).filter(sql.Submission.id.in_(to_delete_ids)).delete(synchronize_session='fetch')
+    session.query(Submission).filter(Submission.id.in_(to_delete_ids)).delete(synchronize_session='fetch')
     session.commit()
 
 def submitted(title):
