@@ -5,6 +5,7 @@ import praw
 import feedparser
 import random
 import feeds
+import os
 
 reddit = praw.Reddit(user_agent='chreddit 1.0')
 username = os.environ['REDDIT_USERNAME']
@@ -33,7 +34,7 @@ def make_submission_title(title, description):
         return submission_title
 
 def post(title, link):
-	sql.submit(entry.title)
+    sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
     reddit.submit('schweizermedien', title, url=link)
 
