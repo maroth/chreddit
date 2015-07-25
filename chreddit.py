@@ -3,17 +3,14 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 logging.basicConfig()
 scheduler = BlockingScheduler()
-print 'Starting chreddit'
 
 
 @scheduler.scheduled_job('interval', seconds=1)
 def post_news_to_reddit():
-    print 'Starting scheduled submission'
     reddit = praw.Reddit(user_agent='chreddit 1.0')
     username = os.environ['REDDIT_USERNAME']
     password = os.environ['REDDIT_PASSWORD']
     reddit.login(username, password, disable_warning=True)
-    print 'Logged in to reddit'
 
     feed_address = random.choice(feeds.feeds)
     feed = feedparser.parse(feed_address)
@@ -22,7 +19,6 @@ def post_news_to_reddit():
             post(entry)
 
 def post(entry):
-    print u'posting ' + entry.title
     sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
     subreddit = es.environ['SUBREDDIT']
