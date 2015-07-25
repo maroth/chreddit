@@ -1,6 +1,6 @@
 import os
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, Column, String, Integer
+from sqlalchemy import create_engine, Column, String, Integer, DateTime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists 
 
@@ -14,6 +14,7 @@ class Submission(Base):
     __tablename__ = 'submission'
     id = Column(Integer, primary_key=True)
     title = Column(String)
+    created = Column(DateTime)
 
 Base.metadata.create_all(engine)
 
@@ -21,6 +22,11 @@ def submit(title):
     submission = Submission(title=title)
     session = Session()
     session.add(submission)
+    session.commit()
+
+    #free database in heroku is limited to 10k rows, so delete old ones
+    session = Session()
+    result = Submission.query.order_by(desc(Submission.created)).offset(9500).delete()
     session.commit()
 
 def submitted(title):
