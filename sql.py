@@ -36,7 +36,7 @@ def submit(title):
 def submitted(title):
     session = Session()
     result = session.query(exists().where(Submission.title==title)).scalar()
-	session.close()
+    session.close()
     return result 
 
 
