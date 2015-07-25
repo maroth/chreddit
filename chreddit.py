@@ -18,7 +18,7 @@ def post_news_to_reddit():
     feed_address = random.choice(feeds.feeds)
     feed = feedparser.parse(feed_address)
     for entry in feed.entries:
-        if not sql.exists(entry.link):
+        if not sql.submitted(entry.link):
             post(entry.title, entry.link)
 
 def post(title, link):

@@ -23,7 +23,7 @@ def submit(title):
     session.add(submission)
     session.commit()
 
-def exists(title):
+def submitted(title):
     session = Session()
     result = session.query(exists().where(Submission.title==title)).scalar()
     return result 
