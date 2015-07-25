@@ -29,6 +29,7 @@ def submit(title):
     session.commit()
     to_delete_ids = [i[0] for i in to_delete]
     if to_delete_ids:
+        print 'deleting ' + str(len(to_delete_ids)) + ' items from database'
         session.query(Submission).filter(Submission.id.in_(to_delete_ids)).delete(synchronize_session='fetch')
         session.commit()
 	session.close()

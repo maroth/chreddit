@@ -20,6 +20,7 @@ def post(entry):
     sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
     subreddit = os.environ['SUBREDDIT']
+    print u'submitting ' + unicode(title)
     reddit.submit(subreddit, title, url=entry.link)
     
 def make_submission_title(title, description):
