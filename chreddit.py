@@ -1,16 +1,13 @@
 import sql, time, os, HTMLParser, praw, feedparser, random, feeds, logging
-from apscheduler.schedulers.blocking import BlockingScheduler
 
 logging.basicConfig()
-scheduler = BlockingScheduler()
 
 reddit = praw.Reddit(user_agent='chreddit 1.0')
 username = os.environ['REDDIT_USERNAME']
 password = os.environ['REDDIT_PASSWORD']
 reddit.login(username, password, disable_warning=True)
 
-@scheduler.scheduled_job('interval', seconds=30)
-def select_article():
+def submit_article():
     feed_address = random.choice(feeds.feeds)
     feed = feedparser.parse(feed_address)
     for entry in feed.entries:
@@ -40,5 +37,6 @@ def make_submission_title(title, description):
         submission_title = ' '.join(submission_title.split(' ')[0:-1]) + suffix
         return submission_title
 
+for _ in range(5):
+    submit_article();
 
-scheduler.start()

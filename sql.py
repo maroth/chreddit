@@ -30,10 +30,10 @@ def submit(title):
     session.commit()
 
     to_delete_ids = [i[0] for i in to_delete]
-
-    session = Session()
-    session.query(Submission).filter(Submission.id.in_(to_delete_ids)).delete(synchronize_session='fetch')
-    session.commit()
+    if to_delete_ids:
+        session = Session()
+        session.query(Submission).filter(Submission.id.in_(to_delete_ids)).delete(synchronize_session='fetch')
+        session.commit()
 
 def submitted(title):
     session = Session()
