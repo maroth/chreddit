@@ -26,7 +26,13 @@ def submit(title):
 
     #free database in heroku is limited to 10k rows, so delete old ones
     session = Session()
-    result = session.query(Submission).order_by(desc(Submission.created)).offset(9500).delete()
+    to_delete = session.query(sql.Submission.id).order_by(sqlalchemy.desc(sql.Submission.created)).offset(9500).all()
+    session.commit()
+
+    to_delete_ids = [i[0] for i in to_delete]
+
+    session = Session()
+    session.query(sql.Submission).filter(sql.Submission.id.in_(to_delete_ids)).delete(synchronize_session='fetch')
     session.commit()
 
 def submitted(title):
