@@ -19,13 +19,14 @@ def post_news_to_reddit():
     feed = feedparser.parse(feed_address)
     for entry in feed.entries:
         if not sql.submitted(entry.link):
-            post(entry.title, entry.link)
+            post(entry)
 
-def post(title, link):
-    print u'posting ' + title
-    sql.submit(title)
+def post(entry):
+    print u'posting ' + entry.title
+    sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
-    reddit.submit('schweizermedien', title, url=link)
+    subreddit = es.environ['SUBREDDIT']
+    reddit.submit(subreddit, title, url=entry.link)
     
 def make_submission_title(title, description):
     max_length = 300
