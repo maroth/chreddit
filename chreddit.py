@@ -22,7 +22,7 @@ def post_news_to_reddit():
             post(entry.title, entry.link)
 
 def post(title, link):
-    print 'posting ' + title
+    print u'posting ' + title
     sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
     reddit.submit('schweizermedien', title, url=link)
