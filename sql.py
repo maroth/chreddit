@@ -12,7 +12,6 @@ Session.configure(bind=engine)
 Base = declarative_base()
 class Submission(Base):
     __tablename__ = 'submission'
-
     id = Column(Integer, primary_key=True)
     title = Column(String)
 
@@ -26,8 +25,8 @@ def submit(title):
 
 def exists(title):
     session = Session()
-    exists = session.query(exists().where(Submission.title==title)).scalar()
-    return exists
+    result = session.query(exists().where(Submission.title==title)).scalar()
+    return result 
 
 
  
