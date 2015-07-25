@@ -6,7 +6,7 @@ scheduler = BlockingScheduler()
 print 'Starting chreddit'
 
 
-@scheduler.scheduled_job('interval', minutes=10)
+@scheduler.scheduled_job('interval', seconds=1)
 def post_news_to_reddit():
     print 'Starting scheduled submission'
     reddit = praw.Reddit(user_agent='chreddit 1.0')
