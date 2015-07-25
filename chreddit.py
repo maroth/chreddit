@@ -4,14 +4,13 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 logging.basicConfig()
 scheduler = BlockingScheduler()
 
+reddit = praw.Reddit(user_agent='chreddit 1.0')
+username = os.environ['REDDIT_USERNAME']
+password = os.environ['REDDIT_PASSWORD']
+reddit.login(username, password, disable_warning=True)
 
 @scheduler.scheduled_job('interval', seconds=1)
-def post_news_to_reddit():
-    reddit = praw.Reddit(user_agent='chreddit 1.0')
-    username = os.environ['REDDIT_USERNAME']
-    password = os.environ['REDDIT_PASSWORD']
-    reddit.login(username, password, disable_warning=True)
-
+def select_article():
     feed_address = random.choice(feeds.feeds)
     feed = feedparser.parse(feed_address)
     for entry in feed.entries:
