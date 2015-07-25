@@ -1,7 +1,6 @@
-import sql, time, os, HTMLParser, praw, os
-import feedparser, random, feeds, logging, config
-
-logging.basicConfig()
+import sql, feeds, config
+import feedparser, HTMLParser, praw
+import random
 
 reddit = praw.Reddit(user_agent=config.user_agent)
 reddit.login(config.username, config.password, disable_warning=True)
@@ -15,10 +14,10 @@ def submit_article():
             break
 
 def post(entry):
+    title = make_submission_title(entry.title, entry.description)
+    print ('submitting: ' + title).encode('utf-8')
     sql.submit(entry.link)
     sql.submit(entry.title)
-    title = make_submission_title(entry.title, entry.description)
-    print 'submitting '.encode('utf-8') + title.encode('utf-8')
     reddit.submit(config.subreddit, title, url=entry.link)
     
 def make_submission_title(title, description):

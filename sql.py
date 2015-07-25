@@ -1,14 +1,15 @@
-import os, config
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, Column, String, Integer, DateTime, desc
+import config
+from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import desc, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists 
+from sqlalchemy.ext.declarative import declarative_base
 
 engine = create_engine(config.database_url)
 Session = sessionmaker()
 Session.configure(bind=engine)
-
 Base = declarative_base()
+
 class Submission(Base):
     __tablename__ = config.tablename
     id = Column(Integer, primary_key=True)
@@ -23,7 +24,7 @@ def submit(title):
     session.add(submission)
     session.commit()
 
-    #free database in heroku is limited, so delete old ones
+    #free database in heroku has limited rows, so delete old ones in a rolling fashion
     to_delete = session.query(Submission.id).order_by(desc(Submission.created)).offset(config.max_rows).all()
     session.commit()
     to_delete_ids = [i[0] for i in to_delete]
