@@ -3,14 +3,17 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 logging.basicConfig()
 scheduler = BlockingScheduler()
+print 'Starting chreddit'
 
 
 @scheduler.scheduled_job('interval', minutes=10)
 def post_news_to_reddit():
+    print 'Starting scheduled submission'
     reddit = praw.Reddit(user_agent='chreddit 1.0')
     username = os.environ['REDDIT_USERNAME']
     password = os.environ['REDDIT_PASSWORD']
     reddit.login(username, password, disable_warning=True)
+    print 'Logged in to reddit'
 
     feed_address = random.choice(feeds.feeds)
     feed = feedparser.parse(feed_address)
@@ -18,6 +21,12 @@ def post_news_to_reddit():
             if not sql.exists(entry.link):
                     post(entry.title, entry.link)
 
+def post(title, link):
+    print 'posting ' + title
+    sql.submit(entry.title)
+    title = make_submission_title(entry.title, entry.description)
+    reddit.submit('schweizermedien', title, url=link)
+    
 def make_submission_title(title, description):
     max_length = 300
     suffix = '...'
@@ -33,9 +42,5 @@ def make_submission_title(title, description):
         submission_title = ' '.join(submission_title.split(' ')[0:-1]) + suffix
         return submission_title
 
-def post(title, link):
-    sql.submit(entry.title)
-    title = make_submission_title(entry.title, entry.description)
-    reddit.submit('schweizermedien', title, url=link)
 
 scheduler.start()
