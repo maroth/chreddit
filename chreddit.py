@@ -8,7 +8,7 @@ reddit.login(config.username, config.password, disable_warning=True)
 def submit_article():
     feed_address = random.choice(feeds.feeds)
     feed = feedparser.parse(feed_address)
-    for entry in feed.entries:
+    for entry in reversed(feed.entries):
         if not sql.submitted(entry.link) and not sql.submitted(entry.title):
             post(entry)
             break
