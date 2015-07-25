@@ -1,6 +1,6 @@
 import os
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, Column, String, Integer, DateTime
+from sqlalchemy import create_engine, Column, String, Integer, DateTime, desc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists 
 
