@@ -9,7 +9,7 @@ username = os.environ['REDDIT_USERNAME']
 password = os.environ['REDDIT_PASSWORD']
 reddit.login(username, password, disable_warning=True)
 
-@scheduler.scheduled_job('interval', seconds=1)
+@scheduler.scheduled_job('interval', minutes=1)
 def select_article():
     feed_address = random.choice(feeds.feeds)
     feed = feedparser.parse(feed_address)
