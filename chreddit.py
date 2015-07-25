@@ -1,3 +1,4 @@
+import local
 import time
 import HTMLParser
 import sqlite3 as sqlite
@@ -24,7 +25,7 @@ feeds = [
     #BASEL
     'http://bazonline.ch/basel/rss.html', #Basler Zeitung Basel
 
-    #ZÜRICH
+    #ZUERICH
     'http://www.nzz.ch/zuerich.rss', #nzz Zuerich
     'http://www.tagesanzeiger.ch/zuerich/rss.html', #tagesanzeiger Zuerich
 
@@ -78,7 +79,7 @@ except sqlite.OperationalError:
     pass
 
 reddit = praw.Reddit(user_agent='chreddit 1.0')
-reddit.login('transpostmeta', 'styles', disable_warning=True)
+reddit.login(local.username, local.password, disable_warning=True)
 
 def is_submitted(link):
     cursor = connection.cursor()
