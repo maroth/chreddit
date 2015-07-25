@@ -1,8 +1,4 @@
 # chreddit
 
-todo:
--verify: delete database entries to never have more than 10000
--logging
--feeds online editieren (aus google docs importieren?)
--change to token based auth
--
+This is a reddit bot that runs on Heroku. It periodically reads RSS feeds from Swiss newspapers and posts the articles to reddit.com/r/chpresseschau.
+
