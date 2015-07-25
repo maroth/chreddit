@@ -1,17 +1,16 @@
-import os
+import os, config
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, Column, String, Integer, DateTime, desc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists 
 
-database_url = os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/chreddit')
-engine = create_engine(database_url)
+engine = create_engine(config.database_url)
 Session = sessionmaker()
 Session.configure(bind=engine)
 
 Base = declarative_base()
 class Submission(Base):
-    __tablename__ = 'submission'
+    __tablename__ = config.tablename
     id = Column(Integer, primary_key=True)
     title = Column(String)
     created = Column(DateTime)
@@ -24,8 +23,8 @@ def submit(title):
     session.add(submission)
     session.commit()
 
-    #free database in heroku is limited to 10k rows, so delete old ones
-    to_delete = session.query(Submission.id).order_by(desc(Submission.created)).offset(9500).all()
+    #free database in heroku is limited, so delete old ones
+    to_delete = session.query(Submission.id).order_by(desc(Submission.created)).offset(config.max_rows).all()
     session.commit()
     to_delete_ids = [i[0] for i in to_delete]
     if to_delete_ids:

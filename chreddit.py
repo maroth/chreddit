@@ -1,11 +1,10 @@
-import sql, time, os, HTMLParser, praw, feedparser, random, feeds, logging
+import sql, time, os, HTMLParser, praw, os
+import feedparser, random, feeds, logging, config
 
 logging.basicConfig()
 
-reddit = praw.Reddit(user_agent='chreddit 1.0')
-username = os.environ['REDDIT_USERNAME']
-password = os.environ['REDDIT_PASSWORD']
-reddit.login(username, password, disable_warning=True)
+reddit = praw.Reddit(user_agent=config.user_agent)
+reddit.login(config.username, config.password, disable_warning=True)
 
 def submit_article():
     feed_address = random.choice(feeds.feeds)
@@ -19,25 +18,23 @@ def post(entry):
     sql.submit(entry.link)
     sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
-    subreddit = os.environ['SUBREDDIT']
     print u'submitting ' + unicode(title)
-    reddit.submit(subreddit, title, url=entry.link)
+    reddit.submit(config.subreddit, title, url=entry.link)
     
 def make_submission_title(title, description):
-    max_length = 300
-    suffix = '...'
     htmlParser = HTMLParser.HTMLParser()
     submission_title = htmlParser.unescape(title)
     if description:
         description = htmlParser.unescape(description)
-        submission_title += ' ' + u'\u2014' + ' ' + description
-    if len(submission_title) <= 300:
+        submission_title += ' ' + config.separator + ' ' + description
+    if len(submission_title) <= config.max_length:
         return submission_title
     else:
-        submission_title = submission_title[:max_length + 1 - len(suffix)]
-        submission_title = ' '.join(submission_title.split(' ')[0:-1]) + suffix
+        #cut the title to the max length minus the suffix length...
+        submission_title = submission_title[:config.max_length + 1 - len(config.suffix)]
+        #then remove the last word (as it might be incomplete) and append the suffix
+        submission_title = ' '.join(submission_title.split(' ')[0:-1]) + config.suffix
         return submission_title
 
-for _ in range(5):
+for _ in range(config.submissions_per_run):
     submit_article();
-
