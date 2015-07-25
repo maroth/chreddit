@@ -21,7 +21,7 @@ def post_news_to_reddit():
 def post(entry):
     sql.submit(entry.title)
     title = make_submission_title(entry.title, entry.description)
-    subreddit = es.environ['SUBREDDIT']
+    subreddit = os.environ['SUBREDDIT']
     reddit.submit(subreddit, title, url=entry.link)
     
 def make_submission_title(title, description):
