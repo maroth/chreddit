@@ -6,12 +6,13 @@ from models import Submission
 
 class Importer:
     dataAccess = DataAccess()
+    parse_feed = feedparser.parse
 
     def importFeed(self, feeds):
-        for feed_address in feeds.feeds:
-            feed = feedparser.parse(feed_address)
+        for feed_address in feeds:
+            feed = self.parse_feed(feed_address)
             for entry in feed.entries:
-                self.process(entry, feed)
+                self.process(entry, feed_address)
 
     def process(self, entry, feed):
         if not self.dataAccess.exists(entry.link):

@@ -3,17 +3,12 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql import exists
+from mock import MagicMock, Mock, call
 
 from models import Submission, Base
-import config
 from importer import Importer
+from utils import Expando
 
-import dataAccess
-
-class Expando(object):
-    pass
 
 class TestImporter:
     def setup(self):
@@ -25,41 +20,61 @@ class TestImporter:
         self.importer = Importer()
         self.importer.dataAccess.Session = self.Session
 
+        self.entry1 = Expando()
+        self.entry1.title = u'entry 1 title é'
+        self.entry1.description = u'entry 1 description é'
+        self.entry1.link = u'http://entry1.linké'
+
+        self.entry2 = Expando()
+        self.entry2.title = u'entry 2 title é'
+        self.entry2.description = u'entry 2 description é'
+        self.entry2.link = self.entry1.link
+
+        self.entry3 = Expando()
+        self.entry3.title = u'entry 3 title é'
+        self.entry3.description = u'entry 3 description é'
+        self.entry3.link = u'http://entry3.linké'
+
+        self.entry4 = Expando()
+        self.entry4.title = u'entry 4 title é'
+        self.entry4.description = u'entry 4 description é'
+        self.entry4.link = u'http://entry4.linké'
+
+        self.feed1 = u'http://feed1url.urlé'
+        self.feed2 = u'http://feed2url.urlé'
+
+        self.feed1contents = Expando()
+        self.feed1contents.entries = [self.entry1, self.entry2]
+        self.feed2contents = Expando()
+        self.feed2contents.entries = [self.entry3, self.entry4]
+
     def teardown(self):
         Base.metadata.drop_all(self.engine)
 
-    def test_newSubmission_isSaved(self):
-        entry = Expando()
-        entry.title = u'My Tést Tïtle'
-        entry.description = u'A really long description that is really long'
-        entry.link = u'http://www.20min.ch/some/link/to?=rg43'
-        feed = u'http://www.20min.ch/rss/rss.tmpl?type=rubrik&get=2'
-
-        self.importer.process(entry, feed)
+    def test_process_newSubmission_isSaved(self):
+        self.importer.process(self.entry1, self.feed1)
 
         saved = self.Session().query(Submission).first()
-        assert saved.title == entry.title
-        assert saved.description == entry.description
-        assert saved.url == entry.link
-        assert saved.feed == feed
-        
-    def test_submissionWithExistingLink_isNotSaved(self):
-        entry1 = Expando()
-        entry1.title = u'My Tést Tïtle'
-        entry1.description = u'A really long description that is really long'
-        entry1.link = u'http://www.20min.ch/some/link/to?=rg43'
-        feed1 = u'http://www.20min.ch/rss/rss.tmpl?type=rubrik&get=2'
+        assert saved.title == self.entry1.title
+        assert saved.description == self.entry1.description
+        assert saved.url == self.entry1.link
+        assert saved.feed == self.feed1
 
-        entry2 = Expando()
-        entry2.title = u'é'
-        entry2.description = u'é'
-        entry2.link = entry1.link
-        feed2 = u'f7uy34ré'
-
-        self.importer.process(entry1, feed1)
-        self.importer.process(entry2, feed2)
+    def test_process_submissionWithExistingLink_isNotSaved(self):
+        self.importer.process(self.entry1, self.feed1)
+        self.importer.process(self.entry2, self.feed2)
 
         assert self.Session().query(Submission).count() == 1
 
+    def test_importFeed_entriesAreSaved(self):
+        self.importer.parse_feed = Mock(
+            side_effect=[self.feed1contents, self.feed2contents])
+        self.importer.process = MagicMock()
 
+        self.importer.importFeed([self.feed1, self.feed2])
 
+        self.importer.process.assert_has_calls(
+            [call(self.entry1, self.feed1),
+             call(self.entry2, self.feed1),
+             call(self.entry3, self.feed2),
+             call(self.entry4, self.feed2)])
