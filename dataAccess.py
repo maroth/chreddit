@@ -10,7 +10,6 @@ class DataAccess:
     Session.configure(bind=engine)
 
     def save(self, submission):
-        #print ('Saving: ' + submission.title.encode('utf-8'))
         session = self.Session()
         session.add(submission)
         session.commit()

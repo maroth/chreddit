@@ -59,6 +59,7 @@ class TestImporter:
         assert saved.description == self.entry1.description
         assert saved.url == self.entry1.link
         assert saved.feed == self.feed1
+        assert saved.created != None
 
     def test_process_submissionWithExistingLink_isNotSaved(self):
         self.importer.process(self.entry1, self.feed1)
@@ -66,12 +67,12 @@ class TestImporter:
 
         assert self.Session().query(Submission).count() == 1
 
-    def test_importFeed_entriesAreSaved(self):
+    def test_importFeeds_entriesAreSaved(self):
         self.importer.parse_feed = Mock(
             side_effect=[self.feed1contents, self.feed2contents])
         self.importer.process = MagicMock()
 
-        self.importer.importFeed([self.feed1, self.feed2])
+        self.importer.importFeeds([self.feed1, self.feed2])
 
         self.importer.process.assert_has_calls(
             [call(self.entry1, self.feed1),

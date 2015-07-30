@@ -1,8 +1,11 @@
 from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
+import datetime
+
 import config
 
 Base = declarative_base()
+
 
 class Submission(Base):
     __tablename__ = config.tablename
@@ -12,8 +15,5 @@ class Submission(Base):
     description = Column(String)
     url = Column(String)
     feed = Column(String)
-    created = Column(DateTime)
+    created = Column(DateTime, default=datetime.datetime.now())
     submitted = Column(DateTime)
-
-    def __eq__(self, other):
-        return isistance(other, Submission) and other.title == self.title

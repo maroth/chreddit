@@ -1,20 +1,24 @@
 from dataAccess import DataAccess
 import feeds, config
-import feedparser, HTMLParser
+import HTMLParser
+from feedparser import parse
 
 from models import Submission
 
 class Importer:
     dataAccess = DataAccess()
-    parse_feed = feedparser.parse
+    def parse_feed(self, feed_address):
+        return parse(feed_address)
 
-    def importFeed(self, feeds):
-        for feed_address in feeds:
+    def importFeeds(self, feed_addresses):
+        for feed_address in feed_addresses:
+            print 'checking feed: ' + feed_address
             feed = self.parse_feed(feed_address)
             for entry in feed.entries:
                 self.process(entry, feed_address)
 
     def process(self, entry, feed):
         if not self.dataAccess.exists(entry.link):
+            print 'saving new feed entry: ' + entry.link
             submission = Submission(title=entry.title, description=entry.description, url=entry.link, feed=feed)
             self.dataAccess.save(submission)
