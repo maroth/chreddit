@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import praw
+from praw.errors import AlreadySubmitted
 import HTMLParser
 import traceback
 from random import shuffle
@@ -36,7 +37,10 @@ class Submitter:
             submission.description,
             config.max_length)
         print ('submitting: ' + title).encode('utf-8')
-        self.reddit.submit(config.subreddit, title, url=submission.url)
+        try:
+            self.reddit.submit(config.subreddit, title, url=submission.url)
+        except AlreadySubmitted:
+            pass
         self.dataAccess.submit(submission)
 
     def make_submission_title(self, title, description, max_length):
