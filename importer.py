@@ -1,12 +1,12 @@
 from dataAccess import DataAccess
-import feeds, config
-import HTMLParser
 from feedparser import parse
 
 from models import Submission
 
+
 class Importer:
     dataAccess = DataAccess()
+
     def parse_feed(self, feed_address):
         return parse(feed_address)
 
@@ -20,5 +20,9 @@ class Importer:
     def process(self, entry, feed):
         if not self.dataAccess.exists(entry.link):
             print 'saving new feed entry: ' + entry.link
-            submission = Submission(title=entry.title, description=entry.description, url=entry.link, feed=feed)
+            submission = Submission(
+                title=entry.title,
+                description=entry.description,
+                url=entry.link,
+                feed=feed)
             self.dataAccess.save(submission)
