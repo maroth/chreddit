@@ -4,6 +4,7 @@
 import praw
 import HTMLParser
 import traceback
+from random import shuffle
 
 from dataAccess import DataAccess
 import config
@@ -21,6 +22,7 @@ class Submitter:
 
     def submit_all_unsubmitted(self):
         submissions = self.dataAccess.all_unsubmitted()
+        shuffle(submissions)
         for submission in submissions:
             try:
                 self.post(submission)

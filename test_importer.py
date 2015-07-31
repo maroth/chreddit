@@ -72,7 +72,7 @@ class TestImporter:
             side_effect=[self.feed1contents, self.feed2contents])
         self.importer.process = MagicMock()
 
-        self.importer.importFeeds([self.feed1, self.feed2])
+        self.importer.import_feeds([self.feed1, self.feed2])
 
         self.importer.process.assert_has_calls(
             [call(self.entry1, self.feed1),

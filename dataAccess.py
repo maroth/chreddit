@@ -56,6 +56,6 @@ class DataAccess:
     def all_unsubmitted(self):
         session = self.Session()
         result = session.query(Submission)\
-            .filter(Submission.submitted == None)
+            .filter(Submission.submitted == None).all()
         session.close()
         return result
