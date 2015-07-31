@@ -1,5 +1,6 @@
 from dataAccess import DataAccess
 from feedparser import parse
+import traceback
 
 from models import Submission
 
@@ -20,9 +21,14 @@ class Importer:
     def process(self, entry, feed):
         if not self.dataAccess.exists(entry.link):
             print 'saving new feed entry: ' + entry.link
-            submission = Submission(
-                title=entry.title,
-                description=entry.description,
-                url=entry.link,
-                feed=feed)
-            self.dataAccess.save(submission)
+            try:
+                submission = Submission(
+                    title=entry.title,
+                    description=entry.description\
+                        if hasattr(entry, 'description') else '',
+                    url=entry.link,
+                    feed=feed)
+                self.dataAccess.save(submission)
+            except:
+                traceback.print_exc()
+

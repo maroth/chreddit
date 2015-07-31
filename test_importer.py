@@ -40,6 +40,10 @@ class TestImporter:
         self.entry4.description = u'entry 4 description é'
         self.entry4.link = u'http://entry4.linké'
 
+        self.entry5 = Expando()
+        self.entry5.title = u'entry 4 title é'
+        self.entry5.link = u'http://entry4.linké'
+
         self.feed1 = u'http://feed1url.urlé'
         self.feed2 = u'http://feed2url.urlé'
 
@@ -64,6 +68,11 @@ class TestImporter:
     def test_process_submissionWithExistingLink_isNotSaved(self):
         self.importer.process(self.entry1, self.feed1)
         self.importer.process(self.entry2, self.feed2)
+
+        assert self.Session().query(Submission).count() == 1
+
+    def test_process_submissionWithNoDescription_isSaved(self):
+        self.importer.process(self.entry5, self.feed1)
 
         assert self.Session().query(Submission).count() == 1
 
