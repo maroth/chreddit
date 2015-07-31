@@ -10,7 +10,7 @@ class Importer:
     def parse_feed(self, feed_address):
         return parse(feed_address)
 
-    def importFeeds(self, feed_addresses):
+    def import_feeds(self, feed_addresses):
         for feed_address in feed_addresses:
             print 'checking feed: ' + feed_address
             feed = self.parse_feed(feed_address)

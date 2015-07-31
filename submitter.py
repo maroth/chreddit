@@ -3,6 +3,7 @@
 
 import praw
 import HTMLParser
+import traceback
 
 from dataAccess import DataAccess
 import config
@@ -25,6 +26,7 @@ class Submitter:
                 self.post(submission)
             except:
                 print 'error submitting'
+                traceback.print_exc()
 
     def post(self, submission):
         title = self.make_submission_title(
