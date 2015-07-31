@@ -3,11 +3,13 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from mock import Mock, call
+from mock import Mock
 
 from submitter import Submitter
-from models import Submission, Base
-from utils import Expando, create_submission
+from models import Base
+from utils import create_submission
+import config
+
 
 class TestSubmitter:
     def setup(self):
@@ -32,4 +34,24 @@ class TestSubmitter:
 
         assert self.submitter.reddit.submit.called
 
-        
+    def test_submitAllUnsubmitted_submittedSubmission_isNotSubmitted(self):
+        submitted = create_submission()
+        self.submitter.dataAccess.save(submitted)
+
+        self.submitter.submit_all_unsubmitted()
+
+        assert not self.submitter.reddit.submit.called
+
+    def test_makeSubmissionTitle_shortValues_concatenatesCorrectly(self):
+        title = self.submitter.make_submission_title(
+            'title', 'description', 100)
+        assert title == 'title ' + config.separator + ' description'
+
+    def test_makeSubmissionTitle_longValues_cutsCorrectly(self):
+        title = self.submitter.make_submission_title(
+            'hans', 'guck in die luft', 12 + len(config.suffix))
+        assert title == 'hans ' + config.separator + ' guck' + config.suffix
+
+        title = self.submitter.make_submission_title(
+            'hans', 'guck in die luft', 14 + len(config.suffix))
+        assert title == 'hans ' + config.separator + ' guck in' + config.suffix
