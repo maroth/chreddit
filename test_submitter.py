@@ -55,3 +55,7 @@ class TestSubmitter:
         title = self.submitter.make_submission_title(
             'hans', 'guck in die luft', 14 + len(config.suffix))
         assert title == 'hans ' + config.separator + ' guck in' + config.suffix
+
+    def test_makeSubmissionTitle_noDescription_noSuffix(self):
+        title = self.submitter.make_submission_title('hans', '', 100)
+        assert title == 'hans'

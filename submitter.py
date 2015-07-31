@@ -42,7 +42,7 @@ class Submitter:
     def make_submission_title(self, title, description, max_length):
         htmlParser = HTMLParser.HTMLParser()
         submission_title = htmlParser.unescape(title)
-        if description:
+        if description != '':
             description = htmlParser.unescape(description)
             submission_title += ' ' + config.separator + ' ' + description
         if len(submission_title) <= max_length:
