@@ -20,3 +20,4 @@ class Submission(Base):
     feed = Column(String)
     created = Column(DateTime, default=datetime.datetime.now())
     submitted = Column(DateTime)
+    submission_id = Column(String)

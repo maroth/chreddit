@@ -39,13 +39,19 @@ class DataAccess:
             session.commit()
         session.close()
 
-    def submit(self, submission):
+    def submit(self, submission, submitted):
         session = self.Session()
         session.query(Submission)\
             .filter(Submission.id == submission.id)\
             .update({
-                Submission.submitted: datetime.datetime.now()
+                Submission.submitted: datetime.datetime.now(),
             })
+        if submitted is not None:
+            session.query(Submission)\
+                .filter(Submission.id == submission.id)\
+                .update({
+                    Submission.submission_id: submitted.submission_id,
+                })
 
     def exists(self, url):
         session = self.Session()
@@ -56,6 +62,15 @@ class DataAccess:
     def all_unsubmitted(self):
         session = self.Session()
         result = session.query(Submission)\
-            .filter(Submission.submitted == None).all()
+            .filter(Submission.submitted is None).all()
+        session.close()
+        return result
+
+    def submitted_with_title(self, title):
+        session = self.Session()
+        result = session.query(Submission)\
+            .filter(Submission.title == title)\
+            .filter(Submission.submitted is not None)\
+            .first()
         session.close()
         return result
