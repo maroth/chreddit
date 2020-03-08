@@ -10,6 +10,7 @@ from dataAccess import DataAccess
 import config
 import feeds
 import time
+import re
 
 
 class Submitter:
@@ -21,34 +22,14 @@ class Submitter:
         shuffle(submissions)
         for submission in submissions:
             self.submit(submission)
-            time.sleep(5)
+            time.sleep(0.5)
 
     def submit(self, submission):
         post_with_same_title = self.dataAccess.submitted_with_title(submission.title)
         if post_with_same_title is not None:
-            self.post_already_submitted_comment(post_with_same_url, submission)
+            self.post_already_submitted_comment(post_with_same_title, submission)
         else:
             self.post_submission(submission)
-
-    def post_already_submitted_comment(self, post_with_same_title, submission):
-        feed_name = feeds.get_feed_name(submission.feed_name)
-        try:
-            existing_submission = self.reddit.submission(id=post_with_same_title.id)
-        except:
-            print('error getting already submitted post')
-            return
-
-         #markdown for links is [link title](http://link.com)
-        comment_text = '[{}{}]({})'.format(
-            config.other_source_prefix,
-            feed_name,
-            submission.url)
-        try:
-            print('commeting: ' + comment_text)
-            existing_submission.add_comment(comment_text)
-        except:
-            print('error commenting')
-            traceback.print_exc()
 
     def post_submission(self, submission):
         title = self.make_submission_title(
@@ -67,12 +48,46 @@ class Submitter:
             print('error submitting')
             traceback.print_exc()
 
+
+    def post_already_submitted_comment(self, post_with_same_title, submission):
+        try:
+            existing_submission = self.reddit.submission(id=post_with_same_title.submission_id)
+        except:
+            print('error getting already submitted post')
+            return
+
+         #markdown for links is [link title](http://link.com)
+        comment_text = '[{}{}]({})'.format(
+            config.other_source_prefix,
+            submission.feed_name,
+            submission.url)
+        try:
+            print('commenting: ' + comment_text)
+            reply = existing_submission.reply(comment_text)
+        except:
+            print('error commenting')
+            reply = None
+            traceback.print_exc()
+
+        self.dataAccess.submit_duplicate(submission, post_with_same_title, reply)
+
+
     def make_submission_title(self, title, description, max_length):
-        htmlParser = HTMLParser()
-        submission_title = htmlParser.unescape(title)
+        submission_title = title
         if description != '':
-            description = htmlParser.unescape(description)
             submission_title += ' ' + config.separator + ' ' + description
+
+        htmlParser = HTMLParser()
+
+        # remove html-encoded special characters 
+        submission_title = htmlParser.unescape(submission_title)
+
+        # remove all closed html tags within the tigle (e.g. images)
+        submission_title = re.sub('<[^<]+?>', '', submission_title)
+
+        # remove multiple whitespaces
+        submission_title = ' '.join(submission_title.split())
+
         if len(submission_title) <= max_length:
             return submission_title
         else:

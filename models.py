@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
 
@@ -22,3 +22,4 @@ class Submission(Base):
     created = Column(DateTime, default=datetime.datetime.now())
     submitted = Column(DateTime)
     submission_id = Column(String)
+    duplicate_of = Column(Integer, ForeignKey(config.tablename + '.id'))
