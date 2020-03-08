@@ -10,10 +10,12 @@ from sqlalchemy.sql import exists
 
 
 class DataAccess:
-    engine = create_engine(config.database_url)
-    Session = sessionmaker()
-    Session.configure(bind=engine)
-    Base.metadata.create_all(engine)
+    def __init__(self):
+        engine = create_engine(config.database_url)
+        Session = sessionmaker()
+        Session.configure(bind=engine)
+        Base.metadata.create_all(engine)
+
 
     def save(self, submission):
         session = self.Session()
@@ -39,11 +41,14 @@ class DataAccess:
         return result
 
 
-    def submitted_with_title(self, title):
+    def find_oldest_submitted_duplicate(self, title):
         session = self.Session()
         result = session.query(Submission)\
-            .filter(Submission.title == title)\
+            .filter(Submission.title == submission.title)\
+            .filter(Submission.url != submission.url)\
+            .filter(Submission.submission_id != None)\
             .filter(Submission.submitted != None)\
+            .order_by(desc(Submission.submitted))\
             .first()
         session.close()
         return result
@@ -66,28 +71,16 @@ class DataAccess:
         session.close()
         
         
-    def submit_duplicate(self, submission, submission_duplicate, reply):
+    def submit_duplicate(self, submission, duplicate, reply):
         session = self.Session()
         
         session.query(Submission)\
             .filter(Submission.id == submission.id)\
             .update({
                 Submission.submitted: datetime.datetime.now(),
+                Submission.duplicate_of: duplicate.id,
+                Submission.submission_id: reply.id
             })
-
-        if submission_duplicate is not None:
-            session.query(Submission)\
-                .filter(Submission.id == submission.id)\
-                .update({
-                    Submission.duplicate_of: submission_duplicate.id
-                })
-
-        if reply is not None:
-            session.query(Submission)\
-                .filter(Submission.id == submission.id)\
-                .update({
-                    Submission.submission_id: reply.id,
-                })
 
         session.commit()
         session.close()

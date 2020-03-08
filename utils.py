@@ -14,7 +14,9 @@ def create_submission(
         description=u'submission déscription',
         url=u'http://www.url.com/test',
         created=datetime.datetime.now(),
-        submitted=datetime.datetime.now()):
+        submitted=datetime.datetime.now(),
+        submission_id='3443s',
+        duplicate_of=None):
 
     submission = Submission()
     submission.title = title
@@ -22,4 +24,6 @@ def create_submission(
     submission.url = url
     submission.created = created
     submission.submitted = submitted
+    submission.submission_id = submission_id
+    submission.duplicate_of = duplicate_of
     return submission

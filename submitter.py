@@ -14,22 +14,33 @@ import re
 
 
 class Submitter:
-    dataAccess = DataAccess()
-    reddit = praw.Reddit(client_id=config.client_id, client_secret=config.client_secret, user_agent=config.user_agent, redirect_uri='http://localhost:8080', username=config.username, password=config.password)
+    def __init__(self):
+        self.dataAccess = DataAccess()
+        self.reddit = praw.Reddit(
+                client_id=config.client_id, 
+                client_secret=config.client_secret, 
+                user_agent=config.user_agent, 
+                redirect_uri='http://localhost:8080', 
+                username=config.username, 
+                password=config.password)
+
 
     def submit_all_unsubmitted(self):
         submissions = self.dataAccess.all_unsubmitted()
         shuffle(submissions)
         for submission in submissions:
             self.submit(submission)
-            time.sleep(0.5)
+
 
     def submit(self, submission):
-        post_with_same_title = self.dataAccess.submitted_with_title(submission.title)
-        if post_with_same_title is not None:
-            self.post_already_submitted_comment(post_with_same_title, submission)
+        duplicate = self.dataAccess.find_oldest_submitted_duplicate(submission)
+        if duplicate is not None:
+            print("duplicate found")
+            self.add_comment_to_post(submission, duplicate)
         else:
+            print("no duplicate found")
             self.post_submission(submission)
+
 
     def post_submission(self, submission):
         title = self.make_submission_title(
@@ -38,38 +49,25 @@ class Submitter:
             config.max_length)
         try:
             print('submitting: ' + title)
-            try:
-                submitted = self.reddit.subreddit(config.subreddit).submit(title, url=submission.url)
-            except Exception as ex:
-                print(ex)
-                submitted = None
+            submitted = self.reddit.subreddit(config.subreddit).submit(title, url=submission.url)
             self.dataAccess.submit(submission, submitted)
         except:
             print('error submitting')
             traceback.print_exc()
 
 
-    def post_already_submitted_comment(self, post_with_same_title, submission):
+    def add_comment_to_post(self, submission, duplicate):
         try:
-            existing_submission = self.reddit.submission(id=post_with_same_title.submission_id)
-        except:
-            print('error getting already submitted post')
-            return
+            duplicate_post = self.reddit.submission(id=duplicate.submission_id)
+            comment_text = self.make_comment(submission)
 
-         #markdown for links is [link title](http://link.com)
-        comment_text = '[{}{}]({})'.format(
-            config.other_source_prefix,
-            submission.feed_name,
-            submission.url)
-        try:
             print('commenting: ' + comment_text)
-            reply = existing_submission.reply(comment_text)
+            reply = duplicate_post.reply(comment_text)
+            self.dataAccess.submit_duplicate(submission, duplicate, reply)
         except:
-            print('error commenting')
+            print('error commenting on duplicate post')
             reply = None
             traceback.print_exc()
-
-        self.dataAccess.submit_duplicate(submission, post_with_same_title, reply)
 
 
     def make_submission_title(self, title, description, max_length):
@@ -99,3 +97,13 @@ class Submitter:
             submission_title =\
                 ' '.join(submission_title.split(' ')[0:-1]) + config.suffix
             return submission_title
+
+    
+    def make_comment(self, submission):
+        #markdown for links is [link title](http://link.com)
+        comment_text = '[{}{}]({})'.format(
+            config.other_source_prefix,
+            submission.feed_name,
+            submission.url)
+        return comment_text
+
