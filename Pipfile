@@ -12,7 +12,6 @@ cryptography = "*"
 enum34 = "*"
 feedparser = "*"
 funcsigs = "*"
-futures = "*"
 idna = "*"
 ipaddress = "*"
 mock = "*"
@@ -35,4 +34,4 @@ SQLAlchemy = "*"
 update_checker = "*"
 
 [requires]
-python_version = "3.5"
+python_version = "*"
