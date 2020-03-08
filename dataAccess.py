@@ -3,7 +3,7 @@
 
 import datetime
 import config
-from models import Submission
+from models import Submission, Base
 from sqlalchemy import desc, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists
@@ -13,12 +13,13 @@ class DataAccess:
     engine = create_engine(config.database_url)
     Session = sessionmaker()
     Session.configure(bind=engine)
+    Base.metadata.create_all(engine)
 
     def save(self, submission):
         session = self.Session()
         session.add(submission)
         session.commit()
-        self.rollingDelete()
+        #self.rollingDelete()
 
     def rollingDelete(self):
         # free database in heroku has limited rows,
@@ -30,9 +31,9 @@ class DataAccess:
         session.commit()
         to_delete_ids = [i[0] for i in to_delete]
         if to_delete_ids:
-            print 'deleting '\
+            print ('deleting '\
                 + str(len(to_delete_ids))\
-                + ' items from database'
+                + ' items from database')
             session.query(Submission)\
                 .filter(Submission.id.in_(to_delete_ids))\
                 .delete(synchronize_session='fetch')
@@ -50,8 +51,10 @@ class DataAccess:
             session.query(Submission)\
                 .filter(Submission.id == submission.id)\
                 .update({
-                    Submission.submission_id: submitted.submission_id,
+                    Submission.submission_id: submitted.id,
                 })
+        session.commit()
+        session.close()
 
     def exists(self, url):
         session = self.Session()
@@ -62,7 +65,7 @@ class DataAccess:
     def all_unsubmitted(self):
         session = self.Session()
         result = session.query(Submission)\
-            .filter(Submission.submitted is None).all()
+            .filter(Submission.submitted == None).all()
         session.close()
         return result
 
@@ -70,7 +73,7 @@ class DataAccess:
         session = self.Session()
         result = session.query(Submission)\
             .filter(Submission.title == title)\
-            .filter(Submission.submitted is not None)\
+            .filter(Submission.submitted != None)\
             .first()
         session.close()
         return result

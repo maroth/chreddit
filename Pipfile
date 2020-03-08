@@ -1,0 +1,38 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+certifi = "*"
+cffi = "*"
+cryptography = "*"
+enum34 = "*"
+feedparser = "*"
+funcsigs = "*"
+futures = "*"
+idna = "*"
+ipaddress = "*"
+mock = "*"
+ndg-httpsclient = "*"
+nose = "*"
+pbr = "*"
+praw = "*"
+psycopg2 = "*"
+pyasn1 = "*"
+pycparser = "*"
+pytz = "*"
+requests = {version = "*", extras = ["security"]}
+six = "*"
+tzlocal = "*"
+urllib3 = "*"
+APScheduler = "*"
+HTMLParser = "*"
+pyOpenSSL = "*"
+SQLAlchemy = "*"
+update_checker = "*"
+
+[requires]
+python_version = "3.5"

@@ -1,18 +1,40 @@
 import os
 
-username = os.environ['REDDIT_USERNAME']
-password = os.environ['REDDIT_PASSWORD']
-subreddit = os.environ['SUBREDDIT']
+try:
+    username = os.environ['REDDIT_USERNAME']
+except:
+    username = ""
+
+try:
+    password = os.environ['REDDIT_PASSWORD']
+except:
+    password = ""
+
+try:
+    subreddit = os.environ['SUBREDDIT']
+except:
+    subreddit = ""
+    
+try:
+    client_id = os.environ['REDDIT_CLIENT_ID']
+except:
+    client_id = ""
+
+try:
+    client_secret = os.environ['REDDIT_CLIENT_SECRET']
+except:
+    client_secret = ""
+
 database_url \
     = os.environ.get('DATABASE_URL',
-                     'postgresql://postgres:postgres@localhost:5432/chreddit')
+                     'postgresql://kusi:styles@localhost:5432/chreddit')
 
 # table name for database to store submissions in
 tablename = 'submission'
 
 # max rows in database, oldest entries which
 # are more than these are deleted on insert
-max_rows = 9500
+max_rows = 100000
 
 # reddit constant
 max_length = 300
@@ -32,4 +54,4 @@ separator = u'\u2014'
 submissions_per_run = 5
 
 # user agent to send to reddit API when submitting
-user_agent = 'submission agent for /r/' + subreddit
+user_agent = 'submission agent for /r/' + subreddit + ' (by transpostmeta)'

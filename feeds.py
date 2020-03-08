@@ -3,20 +3,19 @@
 
 feeds = [
     # SCHWEIZ
-    ['http://www.20min.ch/rss/rss.tmpl?type=rubrik&get=2', '20 Minuten'],
+    ['https://api.20min.ch/rss/view/63', '20 Minuten'],
     ['http://www.blick.ch/news/schweiz/rss.xml', 'Blick'],
-    ['http://www.nzz.ch/aktuell/schweiz.rss', 'Neue Zürcher Zeitung'],
+    ['http://www.nzz.ch/schweiz.rss', 'Neue Zürcher Zeitung'],
     ['http://www.tagesanzeiger.ch/schweiz/rss.html', 'Tages Anzeiger'],
     ['http://www.srf.ch/news/bnf/rss/1890', 'SRF'],
     ['http://www.derbund.ch/schweiz/rss.html', 'Der Bund'],
-    ['http://www.bernerzeitung.ch/schweiz/rss.html', 'Berner Zeitung'],
+    #['http://www.bernerzeitung.ch/schweiz/rss.html', 'Berner Zeitung'],
     ['http://bazonline.ch/schweiz/rss.html', 'Basler Zeitung'],
-    ['http://www.tagblatt.ch/storage/rss/rss/nachrichten-politik-schweiz.xml',
-        'St. Galler Tagblatt'],
+    ['http://www.tagblatt.ch/schweiz.rss', 'St. Galler Tagblatt'],
 
     # BERN
     ['http://www.derbund.ch/bern/rss.html', 'Der Bund'],
-    ['http://www.bernerzeitung.ch/region/bern/rss.html', 'Berner Zeitung'],
+    #['http://www.bernerzeitung.ch/region/bern/rss.html', 'Berner Zeitung'],
 
     # BASEL
     ['http://bazonline.ch/basel/rss.html', 'Basler Zeitung'],
@@ -26,12 +25,10 @@ feeds = [
     ['http://www.tagesanzeiger.ch/zuerich/rss.html', 'Tages Anzeiger'],
 
     # ST. GALLEN
-    ['http://www.tagblatt.ch/storage/rss/rss/' +
-     'ostschweiz-stgallen-stadt-stgallen.xml', 'St. Galler Tagblatt'],
+    ['https://www.tagblatt.ch/ostschweiz/stgallen.rss', 'St. Galler Tagblatt'],
 
     # ZENTRALSCHWEIZ
-    ['http://www.luzernerzeitung.ch/storage/rss/rss/zentralschweiz.xml',
-        'Neue Luzerner Zeitung'],
+    #['http://www.luzernerzeitung.ch/storage/rss/rss/zentralschweiz.xml', 'Neue Luzerner Zeitung'],
 
 
     # 20min international
@@ -132,7 +129,7 @@ feeds = [
     # 'http://www.tagblatt.ch/storage/rss/rss/nachrichten-wirtschaft.xml',
 ]
 
-get_feed_name(feed_url):
+def get_feed_name(feed_url):
     for feed in feeds:
         if feed[0] == feed_url:
             return feed[1]

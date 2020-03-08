@@ -2,59 +2,52 @@
 # -*- coding: utf-8 -*-
 
 import praw
-from praw.errors import AlreadySubmitted
-import HTMLParser
+from html.parser import HTMLParser
 import traceback
 from random import shuffle
 
 from dataAccess import DataAccess
 import config
 import feeds
+import time
 
 
 class Submitter:
     dataAccess = DataAccess()
-    reddit = praw.Reddit(user_agent=config.user_agent)
-
-    def login(self):
-        self.reddit.login(
-            config.username,
-            config.password,
-            disable_warning=True)
+    reddit = praw.Reddit(client_id=config.client_id, client_secret=config.client_secret, user_agent=config.user_agent, redirect_uri='http://localhost:8080', username=config.username, password=config.password)
 
     def submit_all_unsubmitted(self):
         submissions = self.dataAccess.all_unsubmitted()
         shuffle(submissions)
         for submission in submissions:
             self.submit(submission)
+            time.sleep(5)
 
     def submit(self, submission):
-        post_with_same_url = \
-            self.dataAccess.submitted_with_title(submission.title)
-        if post_with_same_url is not None:
+        post_with_same_title = self.dataAccess.submitted_with_title(submission.title)
+        if post_with_same_title is not None:
             self.post_already_submitted_comment(post_with_same_url, submission)
         else:
             self.post_submission(submission)
 
-    def post_already_submitted_comment(self, post_with_same_url, submission):
-        feed_name = feeds.get_feed_name(submission.feed)
+    def post_already_submitted_comment(self, post_with_same_title, submission):
+        feed_name = feeds.get_feed_name(submission.feed_name)
         try:
-            existing_submission = self.reddit.get_submission(
-                submission_id=post_with_same_url.submission_id)
+            existing_submission = self.reddit.submission(id=post_with_same_title.id)
         except:
-            print 'error getting already submitted post'
+            print('error getting already submitted post')
             return
 
-        # markdown for links is [link title](http://link.com)
+         #markdown for links is [link title](http://link.com)
         comment_text = '[{}{}]({})'.format(
             config.other_source_prefix,
             feed_name,
             submission.url)
         try:
-            print('commeting: ' + comment_text).encode('utf-8')
+            print('commeting: ' + comment_text)
             existing_submission.add_comment(comment_text)
         except:
-            print 'error commenting'
+            print('error commenting')
             traceback.print_exc()
 
     def post_submission(self, submission):
@@ -63,19 +56,19 @@ class Submitter:
             submission.description,
             config.max_length)
         try:
-            print('submitting: ' + title).encode('utf-8')
+            print('submitting: ' + title)
             try:
-                submitted = self.reddit.submit(
-                    config.subreddit, title, url=submission.url)
-            except AlreadySubmitted:
-                pass
+                submitted = self.reddit.subreddit(config.subreddit).submit(title, url=submission.url)
+            except Exception as ex:
+                print(ex)
+                submitted = None
             self.dataAccess.submit(submission, submitted)
         except:
-            print 'error submitting'
+            print('error submitting')
             traceback.print_exc()
 
     def make_submission_title(self, title, description, max_length):
-        htmlParser = HTMLParser.HTMLParser()
+        htmlParser = HTMLParser()
         submission_title = htmlParser.unescape(title)
         if description != '':
             description = htmlParser.unescape(description)

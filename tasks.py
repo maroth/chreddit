@@ -16,6 +16,5 @@ if (args.taskname) == 'import':
 
 if (args.taskname) == 'submit':
     submitter = Submitter()
-    submitter.login()
     submitter.submit_all_unsubmitted()
 
