@@ -11,9 +11,11 @@ from sqlalchemy.sql import exists
 
 class DataAccess:
     def __init__(self):
+        if not config.database_url:
+            raise(Exception("database not configured"))
         engine = create_engine(config.database_url)
-        Session = sessionmaker()
-        Session.configure(bind=engine)
+        self.Session = sessionmaker()
+        self.Session.configure(bind=engine)
         Base.metadata.create_all(engine)
 
 
@@ -41,7 +43,7 @@ class DataAccess:
         return result
 
 
-    def find_oldest_submitted_duplicate(self, title):
+    def find_oldest_submitted_duplicate(self, submission):
         session = self.Session()
         result = session.query(Submission)\
             .filter(Submission.title == submission.title)\

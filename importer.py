@@ -13,7 +13,7 @@ class Importer:
 
     def import_feeds(self, feed_addresses):
         for feed_address in feed_addresses:
-            print ('checking feed: ' + str(feed_address))
+            #print ('checking feed: ' + str(feed_address))
             feed = self.parse_feed(feed_address)
             for entry in feed.entries:
                 self.process(entry, feed_address)
