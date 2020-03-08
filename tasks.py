@@ -4,6 +4,7 @@
 import argparse
 from importer import Importer
 from submitter import Submitter
+import status
 from feeds import feeds
 
 parser = argparse.ArgumentParser(description='Start chreddit tasks')
@@ -17,4 +18,7 @@ if (args.taskname) == 'import':
 if (args.taskname) == 'submit':
     submitter = Submitter()
     submitter.submit_all_unsubmitted()
+
+if (args.taskname) == 'status':
+    print(status.get_status())
 

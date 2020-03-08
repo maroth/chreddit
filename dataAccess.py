@@ -29,6 +29,16 @@ class DataAccess:
         return result
 
 
+    def last_submission(self):
+        session = self.Session()
+        result = session.query(Submission)\
+                .filter(Submission.submitted != None)\
+                .order_by(desc(Submission.created))\
+                .first()
+        session.close()
+        return result
+
+
     def submitted_with_title(self, title):
         session = self.Session()
         result = session.query(Submission)\
