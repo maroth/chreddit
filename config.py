@@ -24,10 +24,11 @@ try:
     client_secret = os.environ['REDDIT_CLIENT_SECRET']
 except:
     client_secret = ""
-
-database_url \
-    = os.environ.get('DATABASE_URL',
-                     'postgresql://kusi:styles@localhost:5432/chreddit')
+    
+try:
+    database_url = os.environ.get('DATABASE_URL')
+except: 
+    database_url = ""
 
 # table name for database to store submissions in
 tablename = 'submission'
