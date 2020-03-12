@@ -22,16 +22,16 @@ class WatsonScraper:
             link_soup = BeautifulSoup(link_page.content, 'html.parser')
             title = link_soup.find('h2', class_="maintitle").get_text()
 
-            print ('saving new watson entry: ' + link)
             try:
-                submission = Submission(
-                    title = title,
-                    description = '',
-                    url = link,
-                    feed_url = self.watson_url,
-                    feed_name= 'Watson')
-                self.dataAccess.save(submission)
-                print(submission)
+                if not self.dataAccess.exists(link):
+                    print ('saving new watson entry: ' + link)
+                    submission = Submission(
+                        title = title,
+                        description = '',
+                        url = link,
+                        feed_url = self.watson_url,
+                        feed_name= 'Watson')
+                    self.dataAccess.save(submission)
             except:
                 traceback.print_exc()
 

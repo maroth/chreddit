@@ -23,10 +23,9 @@ psycopg2 = "*"
 pyasn1 = "*"
 pycparser = "*"
 pytz = "*"
-requests = {extras = ["security"],version = "*"}
+requests = {version = "*",extras = ["security"]}
 six = "*"
 tzlocal = "*"
-urllib3 = "*"
 APScheduler = "*"
 HTMLParser = "*"
 pyOpenSSL = "*"
