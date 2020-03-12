@@ -24,7 +24,7 @@ psycopg2 = "*"
 pyasn1 = "*"
 pycparser = "*"
 pytz = "*"
-requests = {version = "*", extras = ["security"]}
+requests = {extras = ["security"],version = "*"}
 six = "*"
 tzlocal = "*"
 urllib3 = "*"
@@ -33,6 +33,7 @@ HTMLParser = "*"
 pyOpenSSL = "*"
 SQLAlchemy = "*"
 update_checker = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.5"
