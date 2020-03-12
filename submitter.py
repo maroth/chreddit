@@ -64,14 +64,21 @@ class Submitter:
             if (submission_url_parsed.netloc == duplicate_url_parsed.netloc):
                 return
 
-            duplicate_post = self.reddit.submission(id=duplicate.submission_id)
+            try:
+                duplicate_post = self.reddit.submission(id=duplicate.submission_id)
+            except:
+                print('error with duplicate post')
+                print('submission:' + submission)
+                print('duplicate:' + submission)
+                return
+
             comment_text = self.make_comment(submission)
 
             print('commenting: ' + comment_text)
             reply = duplicate_post.reply(comment_text)
             self.dataAccess.submit_duplicate(submission, duplicate, reply)
-        except:
-            print('error commenting on duplicate post')
+        except Exception as ex:
+            print('error commenting on duplicate post: ' + str(ex))
             reply = None
             traceback.print_exc()
 
