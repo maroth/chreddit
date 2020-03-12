@@ -12,8 +12,8 @@ from sqlalchemy.sql import exists
 class DataAccess:
     def __init__(self):
         engine = create_engine(config.database_url)
-        Session = sessionmaker()
-        Session.configure(bind=engine)
+        self.Session = sessionmaker()
+        self.Session.configure(bind=engine)
         Base.metadata.create_all(engine)
 
 

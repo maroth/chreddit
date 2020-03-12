@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 
 class WatsonScraper:
+    dataAccess = DataAccess()
     watson_url = 'https://www.watson.ch'
 
     def scrape(self):
@@ -29,7 +30,7 @@ class WatsonScraper:
                     url = link,
                     feed_url = self.watson_url,
                     feed_name= 'Watson')
-                #self.dataAccess.save(submission)
+                self.dataAccess.save(submission)
                 print(submission)
             except:
                 traceback.print_exc()
