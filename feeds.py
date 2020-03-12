@@ -2,6 +2,15 @@
 # -*- coding: utf-8 -*-
 
 feeds = [
+
+
+    ['https://www.bielertagblatt.ch/taxonomy/term/18/feed', 'Bieler Tagblatt'],
+    ['https://www.schweizerbauer.ch/rss/politik-wirtschaft-p-57.xml', 'Schweizer Bauer'],
+    ['https://www.luzernerzeitung.ch/schweiz.rss', 'Luzerner Zeitung'],
+    ['https://www.infosperber.ch/inc/rss.cfm', 'Infosperber'],
+    ['https://api.20min.ch/rss/view/63', '20 Minuten'],
+    ['https://www.woz.ch/t/schweiz/feed', 'Die Wochenzeitung'],
+
     # SCHWEIZ
     ['https://api.20min.ch/rss/view/63', '20 Minuten'],
     ['http://www.blick.ch/news/schweiz/rss.xml', 'Blick'],
