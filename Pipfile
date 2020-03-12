@@ -12,7 +12,6 @@ cryptography = "*"
 enum34 = "*"
 feedparser = "*"
 funcsigs = "*"
-futures = "*"
 idna = "*"
 ipaddress = "*"
 mock = "*"
@@ -36,4 +35,4 @@ update_checker = "*"
 beautifulsoup4 = "*"
 
 [requires]
-python_version = "3.5"
+python_version = "*"
