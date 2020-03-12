@@ -3,6 +3,7 @@
 
 import praw
 from html.parser import HTMLParser
+from urllib import parse
 import traceback
 from random import shuffle
 
@@ -58,6 +59,11 @@ class Submitter:
 
     def add_comment_to_post(self, submission, duplicate):
         try:
+            submission_url_parsed = parse.urlparse(submission.url)
+            duplicate_url_parsed = parse.urlparse(duplicate.url)
+            if (submission_url_parsed.netloc == duplicate_url_parsed.netloc):
+                return
+
             duplicate_post = self.reddit.submission(id=duplicate.submission_id)
             comment_text = self.make_comment(submission)
 
